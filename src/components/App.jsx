@@ -1,7 +1,7 @@
 import React,{Component} from 'react';
 import ReactDOM from 'react-dom';
 import Profile from './github/Profile.jsx';
-import Search from './github/Search.jsx';
+import RepoList from './github/RepoList.jsx';
 
 class App extends Component{
 
@@ -18,54 +18,28 @@ class App extends Component{
   //Get user data from GitHub
   getUserData(){
     $.ajax({
-      url: 'https://api.github.com/users/'+this.state.username+'?client_id='+this.props.clientId+'&client_secret='+this.props.clientSecret,
+      url: 'https://newsapi.org/v2/top-headlines?' + 'sources=bbc-news&' + 'apiKey=b85066c9108d4e28b1a9facc922e6148',
       dataType: 'json',
       cache: false,
       success: function(data){
-        this.setState({userData: data});
-        // console.log(data);
+        this.setState({userData: data.articles});
+        console.log(data);
       }.bind(this),
       error: function(xhr, status, error){
         this.setState({username: null});
         alert(error);
       }.bind(this)
-    });
-  }
-  //Get user repo list
-  getUserRepos(){
-    $.ajax({
-      url: 'https://api.github.com/users/'+this.state.username+'/repos?per_page='+this.state.perPage+'&client_id='+this.props.clientId+'&client_secret='+this.props.clientSecret+'&sort=created',
-      dataType: 'json',
-      cache: false,
-      success: function(data){
-        this.setState({userRepos: data});
-        // console.log(data);
-      }.bind(this),
-      error: function(xhr, status, error){
-        this.setState({username: null});
-        alert(error);
-      }.bind(this)
-    });
-  }
-
-  //Search
-  handleFormSubmit(username){
-    this.setState({username: username},function(){
-      this.getUserData();
-      this.getUserRepos();
     });
   }
 
   componentDidMount(){
     this.getUserData();
-    this.getUserRepos();
   }
 
   render(){
     return(
       <div>
-        <Search onFormSubmit = {this.handleFormSubmit.bind(this) }/>
-        <Profile {...this.state} />
+        <RepoList {...this.state} />
       </div>
     )
   }
